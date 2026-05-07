@@ -1,24 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ToolCard from "../components/ToolCard";
 import { runAudit } from "../lib/auditEngine";
 
 export default function Home() {
   const [formData, setFormData] = useState({
-    tool: "",
-    plan: "",
-    monthlySpend: "",
-    seats: "",
-    useCase: "",
-  });
+  tool: "",
+  plan: "",
+  monthlySpend: "",
+  seats: "",
+  useCase: "",
+});
 
-  const [results, setResults] = useState([]);
+const [results, setResults] = useState([]);
 
-  const handleAudit = () => {
-    const auditResults = runAudit(formData);
-    setResults(auditResults);
-  };
+useEffect(() => {
+  const savedData = localStorage.getItem("auditForm");
+
+  if (savedData) {
+    setFormData(JSON.parse(savedData));
+  }
+}, []);
+
+useEffect(() => {
+  localStorage.setItem(
+    "auditForm",
+    JSON.stringify(formData)
+  );
+}, [formData]);
+
+
+const handleAudit = () => {
+  if (
+    !formData.tool ||
+    !formData.plan ||
+    !formData.monthlySpend ||
+    !formData.seats ||
+    !formData.useCase
+  ) {
+    alert("Please fill all fields.");
+    return;
+  }
+
+  const auditResults = runAudit(formData);
+  setResults(auditResults);
+};
 
   return (
     <main className="min-h-screen flex flex-col items-center p-8">
