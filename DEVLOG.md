@@ -20,3 +20,30 @@
 - Setup the development environment
 - Build the initial spend input form
 - Continue user interviews and gather insights
+
+
+## Day 2 — 2026-05-07
+
+**Hours worked:** 7
+
+**What I did:**
+- Setup Next.js project with Tailwind CSS
+- Configured GitHub repository and resolved merge conflicts
+- Deployed application to Vercel with automatic deployment flow
+- Built initial AI spend audit form
+- Implemented audit engine recommendation logic
+- Added localStorage persistence for form data
+- Added form validation
+- Created dedicated results page
+- Setup Vitest for testing
+- Added GitHub Actions CI workflow
+
+**What I learned:**
+- How Next.js App Router structures routes
+- How CI workflows automatically run tests on push
+- Importance of separating application flow into dedicated pages
+
+**Blockers / what I'm stuck on:**
+- Need to expand audit engine rules and pricing logic
+- Need more advanced multi-tool recommendations
+
