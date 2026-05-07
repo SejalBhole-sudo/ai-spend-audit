@@ -1,10 +1,19 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 export default function ResultsPage() {
-  const savedResults =
-    typeof window !== "undefined"
-      ? JSON.parse(localStorage.getItem("auditResults"))
-      : [];
+  const [savedResults, setSavedResults] = useState([]);
+
+  useEffect(() => {
+    const results = JSON.parse(
+      localStorage.getItem("auditResults")
+    );
+
+    if (results) {
+      setSavedResults(results);
+    }
+  }, []);
 
   return (
     <main className="min-h-screen p-8">
@@ -13,7 +22,7 @@ export default function ResultsPage() {
       </h1>
 
       <div className="space-y-4">
-        {savedResults?.map((result, index) => (
+        {savedResults.map((result, index) => (
           <div
             key={index}
             className="border rounded-lg p-5"
