@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import ToolCard from "../components/ToolCard";
 import { runAudit } from "../lib/auditEngine";
 
 export default function Home() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
   tool: "",
   plan: "",
@@ -44,7 +46,13 @@ const handleAudit = () => {
   }
 
   const auditResults = runAudit(formData);
-  setResults(auditResults);
+
+  localStorage.setItem(
+    "auditResults",
+    JSON.stringify(auditResults)
+  );
+
+  router.push("/results");
 };
 
   return (
