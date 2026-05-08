@@ -47,3 +47,8 @@
 - Need to expand audit engine rules and pricing logic
 - Need more advanced multi-tool recommendations
 
+**Plan for tomorrow:**
+- Expand audit engine with more rules and cross-tool redundancy detection
+- Write real tests covering all audit rules
+- Fix ARCHITECTURE.md with Mermaid diagram
+- Create placeholder files for all required markdown docs
