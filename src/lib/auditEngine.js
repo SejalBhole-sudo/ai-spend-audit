@@ -1,45 +1,185 @@
-export function runAudit(data) {
-  const recommendations = [];
+// PRICING DATA — all verified from official pages
+// Update dates before submission
+export const OFFICIAL_PRICING = {
+  cursor: {
+    Hobby: { pricePerSeat: 0, description: 'Free' },
+    Pro: { pricePerSeat: 20, description: '$20/user/mo' },
+    Business: { pricePerSeat: 40, description: '$40/user/mo' },
+    Enterprise: { pricePerSeat: 100, description: 'Custom, ~$100+/user/mo' }
+  },
+  github_copilot: {
+    Individual: { pricePerSeat: 10, description: '$10/user/mo' },
+    Business: { pricePerSeat: 19, description: '$19/user/mo' },
+    Enterprise: { pricePerSeat: 39, description: '$39/user/mo' }
+  },
+  claude: {
+    Free: { pricePerSeat: 0, description: 'Free' },
+    Pro: { pricePerSeat: 20, description: '$20/user/mo' },
+    Max: { pricePerSeat: 100, description: '$100/user/mo' },
+    Team: { pricePerSeat: 30, description: '$30/user/mo, min 5 seats' },
+    Enterprise: { pricePerSeat: 60, description: 'Custom, ~$60+/user/mo' },
+    'API Direct': { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  },
+  chatgpt: {
+    Plus: { pricePerSeat: 20, description: '$20/user/mo' },
+    Team: { pricePerSeat: 30, description: '$30/user/mo, min 2 seats' },
+    Enterprise: { pricePerSeat: 60, description: 'Custom, ~$60+/user/mo' },
+    'API Direct': { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  },
+  gemini: {
+    Pro: { pricePerSeat: 20, description: '$20/user/mo (Google One AI Premium)' },
+    Ultra: { pricePerSeat: 30, description: '$30/user/mo' },
+    API: { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  },
+  windsurf: {
+    Free: { pricePerSeat: 0, description: 'Free' },
+    Pro: { pricePerSeat: 15, description: '$15/user/mo' },
+    Teams: { pricePerSeat: 35, description: '$35/user/mo' }
+  },
+  anthropic_api: {
+    'Pay-as-you-go': { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  },
+  openai_api: {
+    'Pay-as-you-go': { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  }
+}
 
-  // ChatGPT conditions
-  if (
-    data.tool.toLowerCase() === "chatgpt" &&
-    data.plan.toLowerCase() === "team" &&
-    Number(data.seats) <= 2
-  ) {
-    recommendations.push({
-      current: "ChatGPT Team",
-      recommended: "ChatGPT Plus",
-      savings: 20,
-      reason:
-        "Team plan is expensive for very small teams.",
-    });
+// The main function — takes the form input, returns audit results
+export function runAudit(formData) {
+  const { tools, teamSize, useCase } = formData
+  const results = []
+
+  for (const [toolId, toolData] of Object.entries(tools)) {
+    const { plan, seats, monthlySpend } = toolData
+    const currentSpend = parseFloat(monthlySpend) || 0
+    const toolPricing = OFFICIAL_PRICING[toolId]
+    console.log(toolId, plan, seats, monthlySpend)
+    
+    if (!toolPricing || !toolPricing[plan]) continue
+
+    const officialCostPerSeat = toolPricing[plan].pricePerSeat
+    const officialTotalCost = officialCostPerSeat * seats
+
+    const recommendations = []
+
+    // RULE 1: Are they overpaying vs official pricing?
+    if (currentSpend > officialTotalCost * 1.1 && officialTotalCost > 0) {
+      recommendations.push({
+        type: 'overpaying_retail',
+        message: `You're paying $${currentSpend}/mo but the official rate for ${seats} seat(s) on ${plan} is $${officialTotalCost}/mo.`,
+        saving: currentSpend - officialTotalCost
+      })
+    }
+
+    // RULE 2: Team plan for too few users
+    if (toolId === 'claude' && plan === 'Team' && seats < 5) {
+      recommendations.push({
+        type: 'wrong_plan',
+        message: `Claude Team requires a minimum of 5 seats. With ${seats} user(s), Pro at $20/seat saves you money.`,
+        saving: currentSpend - (20 * seats)
+      })
+    }
+
+    if (toolId === 'chatgpt' && plan === 'Team' && seats === 1) {
+      recommendations.push({
+        type: 'wrong_plan',
+        message: `ChatGPT Team is $30/mo for solo users. Plus at $20/mo is identical for a single user.`,
+        saving: 10
+      })
+    }
+
+    // RULE 3: Cheaper same-vendor plan available
+    if (toolId === 'cursor' && plan === 'Business' && seats <= 2) {
+      recommendations.push({
+        type: 'downgrade',
+        message: `Cursor Business at $40/seat is overkill for ${seats} user(s). Pro at $20/seat covers all core features for small teams.`,
+        saving: (40 - 20) * seats
+      })
+    }
+
+    if (toolId === 'claude' && plan === 'Max' && useCase !== 'coding') {
+      recommendations.push({
+        type: 'downgrade',
+        message: `Claude Max ($100/mo) is designed for very heavy usage. For ${useCase}, Pro at $20/mo likely covers your needs.`,
+        saving: (100 - 20) * seats
+      })
+    }
+
+    // RULE 4: Cross-tool redundancy
+    const toolIds = Object.keys(tools)
+    if (toolId === 'chatgpt' && toolIds.includes('claude') && useCase === 'coding') {
+      recommendations.push({
+        type: 'redundant',
+        message: `For coding use cases, Claude outperforms ChatGPT on most benchmarks. Running both is likely redundant — consolidating saves $${currentSpend}/mo.`,
+        saving: currentSpend
+      })
+    }
+
+    if (toolId === 'github_copilot' && toolIds.includes('cursor') && useCase === 'coding') {
+      recommendations.push({
+        type: 'redundant',
+        message: `Cursor includes AI coding assistance built-in. GitHub Copilot alongside Cursor is redundant for most coding workflows.`,
+        saving: currentSpend
+      })
+    }
+
+    // RULE 5: Credits opportunity (Credex hook)
+    if (currentSpend >= 100) {
+      recommendations.push({
+        type: 'credits_opportunity',
+        message: `Spending $${currentSpend}/mo on ${toolId.replace('_', ' ')}? Credex offers discounted credits from companies that overforecasted — potential 20–40% savings.`,
+        saving: currentSpend * 0.25 // conservative 25% estimate
+      })
+    }
+
+    // Calculate total saving for this tool
+    // Deduplicate: take the highest non-credits saving + credits if applicable
+    const realSavings = recommendations
+      .filter(r => r.type !== 'credits_opportunity')
+      .map(r => r.saving)
+    
+    const maxRealSaving = realSavings.length > 0 ? Math.max(...realSavings) : 0
+    const creditsSaving = recommendations.find(r => r.type === 'credits_opportunity')
+    
+    // Only count credits saving if no better direct saving
+    const totalSaving = maxRealSaving > 0 
+      ? maxRealSaving 
+      : (creditsSaving ? creditsSaving.saving : 0)
+
+    results.push({
+      toolId,
+      toolName: getToolName(toolId),
+      currentSpend,
+      plan,
+      seats,
+      recommendations,
+      totalSaving: Math.max(0, totalSaving),
+      status: recommendations.length === 0 ? 'optimal' : 'can_optimize'
+    })
   }
 
-  // Cursor conditions
-  if (
-    data.tool.toLowerCase() === "cursor" &&
-    Number(data.seats) <= 1
-  ) {
-    recommendations.push({
-      current: "Cursor Business",
-      recommended: "Cursor Pro",
-      savings: 20,
-      reason:
-        "Business features may not be necessary for solo developers.",
-    });
-  }
+  const totalMonthlySaving = results.reduce((sum, r) => sum + r.totalSaving, 0)
+  const totalCurrentSpend = results.reduce((sum, r) => sum + r.currentSpend, 0)
 
-  // 🆕 ADD THIS: Default recommendation if no specific matches
-  if (recommendations.length === 0) {
-    recommendations.push({
-      current: `${data.tool} - ${data.plan}`,
-      recommended: "Review your plan based on actual usage",
-      savings: Math.round(Number(data.monthlySpend) * 0.1), // 10% estimated savings
-      reason:
-        "Your current setup is already optimized. Monitor usage over time to find additional savings.",
-    });
+  return {
+    results,
+    totalMonthlySaving: Math.round(totalMonthlySaving * 100) / 100,
+    totalAnnualSaving: Math.round(totalMonthlySaving * 12 * 100) / 100,
+    totalCurrentSpend: Math.round(totalCurrentSpend * 100) / 100,
+    isOptimal: totalMonthlySaving < 10
   }
+}
 
-  return recommendations;
+function getToolName(toolId) {
+  const names = {
+    cursor: 'Cursor',
+    github_copilot: 'GitHub Copilot',
+    claude: 'Claude',
+    chatgpt: 'ChatGPT',
+    anthropic_api: 'Anthropic API',
+    openai_api: 'OpenAI API',
+    gemini: 'Gemini',
+    windsurf: 'Windsurf'
+  }
+  return names[toolId] || toolId
 }

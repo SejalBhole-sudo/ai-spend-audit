@@ -45,7 +45,19 @@ const handleAudit = () => {
     return;
   }
 
-  const auditResults = runAudit(formData);
+  const formattedData = {
+    tools: {
+      [formData.tool]: {
+        plan: formData.plan,
+        seats: Number(formData.seats),
+        monthlySpend: formData.monthlySpend,
+      },
+    },
+    teamSize: Number(formData.seats),
+    useCase: formData.useCase,
+  };
+
+  const auditResults = runAudit(formattedData);
 
   localStorage.setItem(
     "auditResults",
