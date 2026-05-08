@@ -1,5 +1,24 @@
 # Architecture
 
+## Tech Stack
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend Framework | Next.js 16 (App Router) |
+| Language | JavaScript |
+| Styling | Tailwind CSS |
+| Deployment | Vercel |
+| Version Control | Git + GitHub |
+| Testing | Vitest |
+| CI/CD | GitHub Actions |
+| State Management | React useState |
+| Persistence | localStorage |
+| Routing | Next.js App Router |
+| Audit Logic | Custom Rule-Based Audit Engine |
+| Planned Database | Supabase |
+| Planned AI Integration | Anthropic Claude API |
+
 ## System Diagram
 
 ```mermaid
