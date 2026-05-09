@@ -60,9 +60,9 @@ const handleAudit = () => {
   const auditResults = runAudit(formattedData);
 
   localStorage.setItem(
-    "auditResults",
-    JSON.stringify(auditResults)
-  );
+  "audit_input",
+  JSON.stringify(formattedData)
+);
 
   router.push("/results");
 };
