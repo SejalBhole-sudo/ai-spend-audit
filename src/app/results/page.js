@@ -25,7 +25,15 @@ export default function ResultsPage() {
       body: JSON.stringify({ auditResult: result, useCase: formData.useCase })
     })
       .then(r => r.json())
-      .then(d => { setSummary(d.summary); setSummaryLoading(false) })
+      .then(d => {
+  if (d.summary) {
+    setSummary(d.summary)
+  } else {
+    setSummary(generateFallbackSummary(result))
+  }
+
+  setSummaryLoading(false)
+})
       .catch(() => {
         setSummary(generateFallbackSummary(result))
         setSummaryLoading(false)
