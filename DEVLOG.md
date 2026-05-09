@@ -101,3 +101,64 @@
 - Create email modal and lead capture flow
 - Begin environment variable setup for Anthropic, Supabase, and Resend
 - Add more advanced audit rules and optimization scenarios
+
+## Day 4 — 2026-05-09
+
+**Hours worked:** 9
+
+### What I did
+
+* Redesigned the audit results page with:
+
+  * hero savings section
+  * AI summary section
+  * per-tool recommendation cards
+  * lead capture CTA flow
+* Added fallback summary generation for cases where AI generation fails
+* Implemented `/api/summary` API route using Next.js route handlers
+* Integrated OpenRouter architecture for AI-generated summaries
+* Added graceful error handling and fallback behavior for unavailable models/API failures
+* Refactored frontend summary loading flow and state handling
+* Improved form UX by replacing free-text fields with dropdown-based selections
+* Implemented `/api/leads` backend route for lead capture handling
+* Added Supabase integration using:
+
+  * environment variables
+  * Supabase client SDK
+  * backend persistence flow
+* Created and configured `leads` table in Supabase
+* Successfully persisted captured leads into the database
+* Configured `.env.local` for OpenRouter and Supabase credentials
+* Fixed multiple deployment/runtime issues including:
+
+  * hydration mismatches
+  * undefined audit payloads
+  * Supabase URL configuration
+  * Row Level Security restrictions
+  * Vercel environment variable deployment issues
+* Successfully redeployed the application on Vercel with working production environment configuration
+* Continued expanding the project toward a production-style SaaS workflow
+
+### What I learned
+
+* How to build backend API routes using the Next.js App Router
+* How environment variables differ between local development and production deployments
+* How Supabase Row Level Security policies affect database inserts
+* Why resilient fallback systems are important when integrating external AI providers
+* How to debug deployment/runtime issues using Vercel logs and API responses
+
+### Blockers / what I'm stuck on
+
+* OpenRouter free model availability and credit limitations caused unreliable AI summary generation
+* Transactional email delivery and public shareable report URLs are still pending
+* Current UI is functional but still needs stronger visual polish and branding consistency
+
+### Plan for tomorrow
+
+* Integrate Gemini API for more stable AI summary generation
+* Implement transactional email sending for audit confirmations
+* Add public shareable audit result URLs
+* Add Open Graph/Twitter card metadata for shared reports
+* Expand audit logic coverage for all required tools and pricing plans
+* Improve overall UI polish, spacing, responsiveness, and loading states
+* Complete PROMPTS.md and PRICING_DATA.md documentation
