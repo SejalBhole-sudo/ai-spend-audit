@@ -1,4 +1,9 @@
 import { supabase } from "@/lib/supabase";
+import { Resend } from "resend";
+
+const resend = new Resend(
+  process.env.RESEND_API_KEY
+);
 
 export async function POST(req) {
   try {
@@ -35,6 +40,31 @@ export async function POST(req) {
         { status: 500 }
       );
     }
+
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: email,
+      subject: "Your AI Spend Audit Report",
+      html: `
+        <h2>Your AI Spend Audit</h2>
+
+        <p>
+          Estimated Monthly Savings:
+          <strong>$${monthlySaving}</strong>
+        </p>
+
+        <p>
+          Estimated Annual Savings:
+          <strong>$${annualSaving}</strong>
+        </p>
+
+        <p>
+          Thanks for trying Credex Audit.
+          We'll notify you when additional
+          optimization opportunities become available.
+        </p>
+      `,
+    });
 
     return Response.json({
       success: true,
