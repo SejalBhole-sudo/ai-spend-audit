@@ -4,19 +4,31 @@ export async function generateMetadata({
 }) {
   return {
     title:
-      "AI Spend Audit Report",
+      "AI Spend Audit Report | Discover Hidden AI Cost Savings",
 
     description:
-      "See how much this AI stack could save with Credex Audit.",
+      "See detailed AI spend optimization recommendations, uncover hidden SaaS redundancies, and discover potential monthly and annual savings across your AI tooling stack.",
 
     openGraph: {
       title:
-        "AI Spend Audit Report",
+        "AI Spend Audit Report | Credex Audit",
 
       description:
-        "Discover hidden savings opportunities in AI tooling.",
+        "Discover hidden savings opportunities across ChatGPT, Claude, Cursor, Gemini, Copilot, and more.",
 
       type: "website",
+
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
+
+          width: 1200,
+
+          height: 630,
+
+          alt: "AI Spend Audit Dashboard",
+        },
+      ],
     },
 
     twitter: {
@@ -26,11 +38,14 @@ export async function generateMetadata({
         "AI Spend Audit Report",
 
       description:
-        "Discover hidden AI cost savings.",
+        "Discover hidden AI tooling savings and optimization opportunities.",
+
+      images: [
+        "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
+      ],
     },
   };
 }
-
 export default async function ReportPage({ params }) {
   const { id } = params; 
   

@@ -1,11 +1,11 @@
-// PRICING DATA — all verified from official pages
-// Update dates before submission
 export const OFFICIAL_PRICING = {
   cursor: {
     Hobby: { pricePerSeat: 0, description: 'Free' },
     Pro: { pricePerSeat: 20, description: '$20/user/mo' },
-    Business: { pricePerSeat: 40, description: '$40/user/mo' },
-    Enterprise: { pricePerSeat: 100, description: 'Custom, ~$100+/user/mo' }
+    ProPlus: { pricePerSeat: 60, description: '$60/user/mo' },
+    Ultra: { pricePerSeat: 200, description: '$200/user/mo' },
+    Teams: { pricePerSeat: 40, description: '$40/user/mo' },
+    Enterprise: { pricePerSeat: 100, description: 'Custom enterprise pricing' }
   },
   github_copilot: {
     Individual: { pricePerSeat: 10, description: '$10/user/mo' },
@@ -15,20 +15,28 @@ export const OFFICIAL_PRICING = {
   claude: {
     Free: { pricePerSeat: 0, description: 'Free' },
     Pro: { pricePerSeat: 20, description: '$20/user/mo' },
-    Max: { pricePerSeat: 100, description: '$100/user/mo' },
-    Team: { pricePerSeat: 30, description: '$30/user/mo, min 5 seats' },
-    Enterprise: { pricePerSeat: 60, description: 'Custom, ~$60+/user/mo' },
+    Max5: { pricePerSeat: 100, description: '$100/user/mo' },
+    Max20: { pricePerSeat: 200, description: '$200/user/mo' },
+    Team: { pricePerSeat: 25, description: '$25/user/mo, min 5 seats' },
+    Enterprise: { pricePerSeat: 60, description: 'Custom enterprise pricing' },
     'API Direct': { pricePerSeat: 0, description: 'Pay-as-you-go' }
   },
   chatgpt: {
+    Free: { pricePerSeat: 0, description: 'Free' },
+    Go: { pricePerSeat: 5, description: '₹399/mo India plan (~$5)' },
     Plus: { pricePerSeat: 20, description: '$20/user/mo' },
-    Team: { pricePerSeat: 30, description: '$30/user/mo, min 2 seats' },
-    Enterprise: { pricePerSeat: 60, description: 'Custom, ~$60+/user/mo' },
+    Pro: { pricePerSeat: 120, description: '$120/user/mo' },
+    Business: { pricePerSeat: 25, description: '$25/user/mo, min 2 seats' },
+    Enterprise: { pricePerSeat: 60, description: 'Custom enterprise pricing' },
     'API Direct': { pricePerSeat: 0, description: 'Pay-as-you-go' }
   },
   gemini: {
-    Pro: { pricePerSeat: 20, description: '$20/user/mo (Google One AI Premium)' },
-    Ultra: { pricePerSeat: 30, description: '$30/user/mo' },
+    Free: { pricePerSeat: 0, description: 'Free' },
+    AIPlus: { pricePerSeat: 5, description: '₹399/mo (~$5)' },
+    AIPro: { pricePerSeat: 23, description: '₹1950/mo (~$23)' },
+    AIUltra: { pricePerSeat: 290, description: '₹24500/mo (~$290)' },
+    Business: { pricePerSeat: 20, description: '$20/user/mo' },
+    Enterprise: { pricePerSeat: 30, description: '$30/user/mo' },
     API: { pricePerSeat: 0, description: 'Pay-as-you-go' }
   },
   windsurf: {
@@ -41,6 +49,12 @@ export const OFFICIAL_PRICING = {
   },
   openai_api: {
     'Pay-as-you-go': { pricePerSeat: 0, description: 'Pay-as-you-go' }
+  },
+  v0: {
+    Free: { pricePerSeat: 0, description: 'Free' },
+    Premium: { pricePerSeat: 20, description: '$20/user/mo' },
+    Team: { pricePerSeat: 50, description: 'Custom team pricing' },
+    Enterprise: { pricePerSeat: 100, description: 'Enterprise pricing' }
   }
 }
 
@@ -54,7 +68,7 @@ export function runAudit(formData) {
     const currentSpend = parseFloat(monthlySpend) || 0
     const toolPricing = OFFICIAL_PRICING[toolId]
     console.log(toolId, plan, seats, monthlySpend)
-    
+
     if (!toolPricing || !toolPricing[plan]) continue
 
     const officialCostPerSeat = toolPricing[plan].pricePerSeat
@@ -76,7 +90,7 @@ export function runAudit(formData) {
       recommendations.push({
         type: 'wrong_plan',
         message: `Claude Team requires a minimum of 5 seats. With ${seats} user(s), Pro at $20/seat saves you money.`,
-        saving: currentSpend - (20 * seats)
+        saving: currentSpend - 20 * seats
       })
     }
 
@@ -132,19 +146,57 @@ export function runAudit(formData) {
       })
     }
 
+    if (toolId === 'gemini' && plan === 'AIUltra') {
+      recommendations.push({
+        type: 'overspend',
+        message: 'Gemini AI Ultra is designed for extremely heavy AI workflows and may be excessive for most users.',
+        saving: currentSpend - 23
+      })
+    }
+
+    if (toolId === 'v0' && Object.keys(tools).includes('cursor') && useCase === 'frontend') {
+      recommendations.push({
+        type: 'redundant',
+        message: 'v0 and Cursor overlap for frontend prototyping and UI generation workflows.',
+        saving: currentSpend
+      })
+    }
+
+    if (toolId === 'gemini' && Object.keys(tools).includes('chatgpt')) {
+      recommendations.push({
+        type: 'redundant',
+        message: 'Gemini and ChatGPT overlap heavily for general-purpose AI workflows.',
+        saving: currentSpend * 0.5
+      })
+    }
+
+    if (toolId === 'openai_api' && Object.keys(tools).includes('chatgpt')) {
+      recommendations.push({
+        type: 'optimization',
+        message: 'OpenAI API usage plus ChatGPT subscriptions may create overlapping spend depending on workflow.',
+        saving: currentSpend * 0.2
+      })
+    }
+
+    if (toolId === 'anthropic_api' && Object.keys(tools).includes('claude')) {
+      recommendations.push({
+        type: 'optimization',
+        message: 'Anthropic API and Claude Max subscriptions may overlap for heavy Claude workflows.',
+        saving: currentSpend * 0.2
+      })
+    }
+
     // Calculate total saving for this tool
     // Deduplicate: take the highest non-credits saving + credits if applicable
     const realSavings = recommendations
       .filter(r => r.type !== 'credits_opportunity')
       .map(r => r.saving)
-    
+
     const maxRealSaving = realSavings.length > 0 ? Math.max(...realSavings) : 0
     const creditsSaving = recommendations.find(r => r.type === 'credits_opportunity')
-    
+
     // Only count credits saving if no better direct saving
-    const totalSaving = maxRealSaving > 0 
-      ? maxRealSaving 
-      : (creditsSaving ? creditsSaving.saving : 0)
+    const totalSaving = maxRealSaving > 0 ? maxRealSaving : creditsSaving ? creditsSaving.saving : 0
 
     results.push({
       toolId,
@@ -179,7 +231,8 @@ function getToolName(toolId) {
     anthropic_api: 'Anthropic API',
     openai_api: 'OpenAI API',
     gemini: 'Gemini',
-    windsurf: 'Windsurf'
+    windsurf: 'Windsurf',
+    v0: 'v0'
   }
   return names[toolId] || toolId
 }
