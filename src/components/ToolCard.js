@@ -2,12 +2,62 @@ export default function ToolCard({
   formData,
   setFormData,
 }) {
+
+  const TOOL_PLANS = {
+    chatgpt: [
+      "Free",
+      "Go",
+      "Plus",
+      "Pro",
+      "Business",
+      "Enterprise",
+    ],
+
+    claude: [
+      "Free",
+      "Pro",
+      "Max5",
+      "Max20",
+      "Team",
+      "Enterprise",
+    ],
+
+    cursor: [
+      "Hobby",
+      "Pro",
+      "ProPlus",
+      "Teams",
+      "Enterprise",
+    ],
+
+    github_copilot: [
+      "Individual",
+      "Business",
+      "Enterprise",
+    ],
+
+    gemini: [
+      "Free",
+      "AIPlus",
+      "AIPro",
+      "AIUltra",
+      "Business",
+      "Enterprise",
+    ],
+
+    windsurf: [
+      "Free",
+      "Pro",
+      "Teams",
+    ],
+  };
+
   return (
-    <div className="w-full max-w-xl bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-5">
+    <div className="w-full max-w-xl bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl space-y-5">
 
       {/* Tool */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           AI Tool
         </label>
 
@@ -17,33 +67,36 @@ export default function ToolCard({
             setFormData({
               ...formData,
               tool: e.target.value,
+              plan: "",
             })
           }
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
         >
-          <option value="">Select tool</option>
+          <option value="" className="text-black">
+            Select tool
+          </option>
 
-          <option value="chatgpt">
+          <option value="chatgpt" className="text-black">
             ChatGPT
           </option>
 
-          <option value="claude">
+          <option value="claude" className="text-black">
             Claude
           </option>
 
-          <option value="cursor">
+          <option value="cursor" className="text-black">
             Cursor
           </option>
 
-          <option value="github_copilot">
+          <option value="github_copilot" className="text-black">
             GitHub Copilot
           </option>
 
-          <option value="gemini">
+          <option value="gemini" className="text-black">
             Gemini
           </option>
 
-          <option value="windsurf">
+          <option value="windsurf" className="text-black">
             Windsurf
           </option>
         </select>
@@ -51,7 +104,7 @@ export default function ToolCard({
 
       {/* Plan */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Plan
         </label>
 
@@ -63,47 +116,28 @@ export default function ToolCard({
               plan: e.target.value,
             })
           }
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
         >
-          <option value="">Select plan</option>
-
-          <option value="Free">
-            Free
+          <option value="" className="text-black">
+            Select plan
           </option>
 
-          <option value="Plus">
-            Plus
-          </option>
-
-          <option value="Pro">
-            Pro
-          </option>
-
-          <option value="Team">
-            Team
-          </option>
-
-          <option value="Business">
-            Business
-          </option>
-
-          <option value="Enterprise">
-            Enterprise
-          </option>
-
-          <option value="Max">
-            Max
-          </option>
-
-          <option value="Individual">
-            Individual
-          </option>
+          {formData.tool &&
+            TOOL_PLANS[formData.tool]?.map((plan) => (
+              <option
+                key={plan}
+                value={plan}
+                className="text-black"
+              >
+                {plan}
+              </option>
+            ))}
         </select>
       </div>
 
       {/* Monthly Spend */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Monthly Spend ($)
         </label>
 
@@ -117,13 +151,13 @@ export default function ToolCard({
               monthlySpend: e.target.value,
             })
           }
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
       {/* Seats */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Number of Seats
         </label>
 
@@ -137,13 +171,13 @@ export default function ToolCard({
               seats: e.target.value,
             })
           }
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
         />
       </div>
 
       {/* Use Case */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-200 mb-1">
           Primary Use Case
         </label>
 
@@ -155,23 +189,25 @@ export default function ToolCard({
               useCase: e.target.value,
             })
           }
-          className="w-full border border-gray-300 rounded-lg px-3 py-2"
+          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
         >
-          <option value="">Select use case</option>
+          <option value="" className="text-black">
+            Select use case
+          </option>
 
-          <option value="coding">
+          <option value="coding" className="text-black">
             Coding
           </option>
 
-          <option value="writing">
+          <option value="writing" className="text-black">
             Writing
           </option>
 
-          <option value="research">
+          <option value="research" className="text-black">
             Research
           </option>
 
-          <option value="design">
+          <option value="design" className="text-black">
             Design
           </option>
         </select>
