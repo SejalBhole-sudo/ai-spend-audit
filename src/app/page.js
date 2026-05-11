@@ -14,7 +14,7 @@ export default function Home() {
   seats: "",
   useCase: "",
 });
-
+const [loading, setLoading] = useState(false);
 const [results, setResults] = useState([]);
 
 useEffect(() => {
@@ -33,7 +33,7 @@ useEffect(() => {
 }, [formData]);
 
 
-const handleAudit = () => {
+const handleAudit = async () => {
   if (
     !formData.tool ||
     !formData.plan ||
@@ -45,26 +45,41 @@ const handleAudit = () => {
     return;
   }
 
-  const formattedData = {
-    tools: {
-      [formData.tool]: {
-        plan: formData.plan,
-        seats: Number(formData.seats),
-        monthlySpend: formData.monthlySpend,
+  setLoading(true);
+
+  try {
+    const formattedData = {
+      tools: {
+        [formData.tool]: {
+          plan: formData.plan,
+          seats: Number(formData.seats),
+          monthlySpend: formData.monthlySpend,
+        },
       },
-    },
-    teamSize: Number(formData.seats),
-    useCase: formData.useCase,
-  };
+      teamSize: Number(formData.seats),
+      useCase: formData.useCase,
+    };
 
-  const auditResults = runAudit(formattedData);
+    const auditResults = runAudit(formattedData);
 
-  localStorage.setItem(
-  "audit_input",
-  JSON.stringify(formattedData)
-);
+    setResults(auditResults.results || []);
 
-  router.push("/results");
+    localStorage.setItem(
+      "audit_input",
+      JSON.stringify(formattedData)
+    );
+
+    router.push("/results");
+
+  } catch (error) {
+    console.error("Audit failed:", error);
+
+    alert(
+      "Something went wrong while generating the audit."
+    );
+  } finally {
+    setLoading(false);
+  }
 };
 
   return (
@@ -78,16 +93,21 @@ const handleAudit = () => {
       </p>
 
       <ToolCard
-        formData={formData}
-        setFormData={setFormData}
-      />
+  formData={formData}
+  setFormData={setFormData}
+/>
 
-      <button
-        onClick={handleAudit}
-        className="mt-6 bg-black text-white px-6 py-3 rounded-lg"
-      >
-        Run Audit
-      </button>
+<button
+  onClick={handleAudit}
+  disabled={loading}
+  className={`mt-6 px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${
+    loading
+      ? "bg-gray-400 cursor-not-allowed text-white"
+      : "bg-black hover:bg-gray-800 text-white"
+  }`}
+>
+  {loading ? "Generating Audit..." : "Run Free Audit →"}
+</button>
 
       <div className="mt-10 w-full max-w-xl">
         {results.map((result, index) => (
