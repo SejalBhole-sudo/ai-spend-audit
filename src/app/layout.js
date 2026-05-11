@@ -12,7 +12,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "AI Spend Audit — Find Out If You're Overpaying for AI Tools",
+  title: "Credexiq — Find Out If You're Overpaying for AI Tools",
   description:
     "Free tool for startups to audit their AI subscription spend and find savings.",
 };

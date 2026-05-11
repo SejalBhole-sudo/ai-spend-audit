@@ -134,7 +134,7 @@ export default function ResultsPage() {
           
           <button
             onClick={() => router.push('/')}
-            className="group relative px-6 py-2.5 rounded-xl overflow-hidden font-medium transition-all duration-300"
+            className="group relative px-6 py-2.5 rounded-xl overflow-hidden font-medium transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.12)]"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 transition-all" />
             <div className="absolute inset-0 border border-white/20 rounded-xl group-hover:border-white/40 transition-colors" />
@@ -215,7 +215,7 @@ export default function ResultsPage() {
             {results.map((r) => (
               <div
                 key={r.toolId}
-                className="bg-white/5 backdrop-blur-xl border border-white/20 hover:border-white/40 rounded-2xl p-6 transition-all duration-300"
+                className="bg-white/5 backdrop-blur-xl border border-white/20 hover:border-white/40 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.12)]"
               >
                 {/* Tool Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -281,7 +281,7 @@ export default function ResultsPage() {
 
         {/* Footer */}
         <div className="text-center text-gray-500 text-xs">
-          <p>CredexIQ © 2024</p>
+          <p>CredexIQ © 2026</p>
         </div>
       </div>
 
@@ -290,7 +290,7 @@ export default function ResultsPage() {
 
       {/* Notification Toast */}
       {notification.show && (
-        <div className={`fixed bottom-6 right-6 px-6 py-4 rounded-xl backdrop-blur-xl border transition-all duration-300 max-w-sm ${
+        <div className={`fixed bottom-6 right-6 px-6 py-4 rounded-xl backdrop-blur-xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.12)] max-w-sm ${
           notification.type === 'success'
             ? 'bg-green-600/20 border-green-500/30 text-green-300'
             : 'bg-red-600/20 border-red-500/30 text-red-300'
@@ -303,18 +303,31 @@ export default function ResultsPage() {
 }
 
 function generateFallbackSummary(result) {
-  const savings = result.totalMonthlySaving
-  const spend = result.totalCurrentSpend
-  
+  const savings = result.totalMonthlySaving;
+  const spend = result.totalCurrentSpend;
+  const annual = result.totalAnnualSaving;
+
   if (result.isOptimal) {
-    return `Your AI tool spending is well-optimized. You're currently investing $${spend.toFixed(0)}/month with no major inefficiencies detected.`
+    return `Your AI stack appears well optimized for your current workflow. Based on the tools and pricing analyzed, there are no major inefficiencies or overlapping subscriptions detected at this time. You're currently spending approximately $${spend.toFixed(
+      0
+    )}/month across your AI tooling setup, which aligns reasonably well with your usage profile. CredexIQ recommends periodically reviewing usage patterns and pricing changes to maintain long-term efficiency as AI tooling evolves.`;
   }
-  
+
   if (savings > 500) {
-    return `You have significant optimization opportunities. By adjusting your plans and team allocation, you could save $${savings.toFixed(0)}/month ($${result.totalAnnualSaving.toFixed(0)}/year). This represents a ${((savings / spend) * 100).toFixed(0)}% reduction in your current spending.`
+    return `Your audit uncovered significant optimization opportunities across your AI tooling stack. You're currently spending approximately $${spend.toFixed(
+      0
+    )}/month, with potential savings of around $${savings.toFixed(
+      0
+    )}/month — equivalent to nearly $${annual.toFixed(
+      0
+    )}/year in reduced software costs. Several recommendations focus on eliminating overlapping functionality, reducing over-provisioned plans, and aligning subscriptions more closely with actual usage requirements. Implementing these optimizations could substantially improve overall cost efficiency without impacting productivity.`;
   }
-  
-  return `Your audit is complete. You're spending $${spend.toFixed(0)}/month and could optimize for $${savings.toFixed(0)}/month in savings.`
+
+  return `Your AI spend audit identified several moderate optimization opportunities within your current stack. You're currently spending approximately $${spend.toFixed(
+    0
+  )}/month, with estimated savings of around $${savings.toFixed(
+    0
+  )}/month available through plan adjustments and better subscription alignment. While your current setup remains functional, certain tools appear slightly over-provisioned for the stated use case. Applying the recommended optimizations could improve long-term cost efficiency while maintaining the same overall workflow quality and productivity.`;
 }
 
 function EmailModal({ auditData, onClose }) {

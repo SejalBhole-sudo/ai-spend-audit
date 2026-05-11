@@ -1,8 +1,10 @@
-# AI Spend Audit
+# CredexIQ
 
-AI Spend Audit is a lightweight SaaS-style web application that helps startups, developers, and small teams identify unnecessary spending across AI tools like ChatGPT, Claude, Cursor, GitHub Copilot, Gemini, Windsurf, and more.
+CredexIQ is a modern AI infrastructure cost optimization platform designed for startups, engineering teams, and AI-heavy workflows.
 
-The platform analyzes tool subscriptions, detects redundant products, compares pricing against official plans, and estimates potential monthly and annual savings.
+The platform audits AI subscription spending across tools like ChatGPT, Claude, Cursor, GitHub Copilot, Gemini, Windsurf, and more — identifying unnecessary costs, overlapping subscriptions, pricing inefficiencies, and optimization opportunities.
+
+CredexIQ helps teams reduce recurring AI SaaS expenses through intelligent rule-based auditing, pricing analysis, and personalized optimization recommendations.
 
 ---
 
@@ -14,34 +16,53 @@ https://credex-audit-beta.vercel.app/
 
 ---
 
-## Features
+# Core Features
 
-- AI tool spend audit
-- Official pricing comparison
+- AI subscription cost auditing
+- Official pricing comparison engine
 - Overpayment detection
 - Wrong-plan detection
 - Cross-tool redundancy analysis
-- Savings estimation
-- Annual + monthly savings calculations
-- Results persistence using localStorage
+- Monthly + annual savings calculations
+- AI-generated optimization summaries
+- Intelligent fallback summary system
+- Shareable audit reports
+- Local persistence using localStorage
+- Responsive SaaS-style UI
 - Automated CI pipeline with GitHub Actions
 - Unit-tested audit engine using Vitest
 
 ---
 
-## Current Audit Rules
+# Supported AI Tools
 
-The audit engine currently supports:
+CredexIQ currently supports auditing for:
 
-- Overpaying vs official pricing
-- Team plan mismatch detection
-- Cheaper same-vendor plan recommendations
-- Cross-tool redundancy detection
-- Credit optimization opportunities
+- ChatGPT
+- Claude
+- Cursor
+- GitHub Copilot
+- Gemini
+- Windsurf
+
+Additional tools and pricing providers are planned in future updates.
 
 ---
 
-## Tech Stack
+# Current Audit Rules
+
+The audit engine currently evaluates:
+
+- Overpaying against official pricing
+- Team plan mismatch detection
+- Same-vendor downgrade opportunities
+- Cross-tool redundancy
+- Subscription overlap analysis
+- AI credit optimization opportunities
+
+---
+
+# Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -51,33 +72,39 @@ The audit engine currently supports:
 | Testing | Vitest |
 | CI/CD | GitHub Actions |
 | Deployment | Vercel |
+| AI Integration | Google Gemini API |
 | State Persistence | localStorage |
-| Planned Database | Supabase |
-| Planned AI API | Anthropic Claude API |
+| Database | Supabase |
 
 ---
 
-## Local Development
+# Local Development
 
-Clone the repository:
+## Clone Repository
 
 ```bash
-git clone https://github.com/SejalBhole-sudo/credex-audit.git
+git clone https://github.com/SejalBhole-sudo/credexiq
 ```
 
-Install dependencies:
+---
+
+## Install Dependencies
 
 ```bash
 npm install
 ```
 
-Run development server:
+---
+
+## Start Development Server
 
 ```bash
 npm run dev
 ```
 
-Run tests:
+---
+
+## Run Tests
 
 ```bash
 npm run test
@@ -85,75 +112,119 @@ npm run test
 
 ---
 
-## Architecture Decisions
+# Environment Variables
 
-### Why Next.js?
+Create a `.env.local` file:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+---
+
+# Architecture Decisions
+
+## Why Next.js?
+
 Next.js App Router provides:
-- simple routing
-- API route support
-- scalable architecture
+
+- scalable routing architecture
+- built-in API routes
+- optimized frontend performance
 - seamless Vercel deployment
+- simplified full-stack development
 
-### Why JavaScript instead of TypeScript?
-The project prioritizes rapid iteration during a constrained 7-day build timeline.
+---
 
-Type safety tradeoffs are mitigated through:
-- deterministic audit logic
-- unit testing
-- modular architecture
+## Why Rule-Based Auditing Instead of AI Calculations?
 
-### Why Rule-Based Audit Logic Instead of AI?
 Financial recommendations should be:
+
 - deterministic
 - explainable
 - auditable
+- reproducible
 
-The audit engine intentionally uses hardcoded pricing rules instead of AI-generated calculations.
+CredexIQ intentionally uses rule-based pricing analysis instead of AI-generated financial calculations.
 
-AI will only be used later for:
+AI is only used for:
+
 - personalized summaries
-- recommendation explanation
+- recommendation explanations
+- optimization narratives
 
 ---
 
-## Current Project Status
+## Why JavaScript Instead of TypeScript?
 
-### Completed
+The project prioritized rapid iteration and fast MVP execution during a constrained startup-style build cycle.
+
+Risk reduction is handled through:
+
+- deterministic audit logic
+- modular architecture
+- isolated business rules
+- automated testing
+
+---
+
+# AI Summary System
+
+CredexIQ uses Google Gemini for generating personalized executive summaries of audit results.
+
+The platform also includes a resilient fallback summary engine to ensure polished user experience even during:
+
+- API outages
+- rate limiting
+- quota exhaustion
+- model downtime
+
+---
+
+# Current Project Status
+
+## Completed
+
 - Core audit engine
-- Savings calculations
-- Results page
+- Savings calculation system
+- Responsive homepage
+- Results dashboard
+- AI summary integration
+- Fallback summary engine
+- Shareable report infrastructure
 - Testing infrastructure
 - CI workflow
 - Deployment pipeline
-- Architecture documentation
-
-### In Progress
-- AI-generated summaries
-- Lead capture system
-- Supabase integration
-- Shareable public reports
-- Email workflows
+- Product documentation
+- UI/UX polish
 
 ---
 
-## Screenshots
-
-Screenshots will be added during final polish phase.
-
----
-
-## Future Improvements
+## In Progress
 
 - Supabase persistence
+- Lead capture workflows
+- Email report delivery
 - Public report sharing
-- Claude-generated summaries
-- Better visual analytics
-- Pricing sync automation
 - Team dashboards
+- Pricing sync automation
 
 ---
 
-## Repository Structure
+# Future Improvements
+
+- Supabase database integration
+- Team collaboration dashboards
+- Real-time pricing synchronization
+- Advanced analytics visualizations
+- Referral system
+- Multi-audit history
+- Enterprise reporting
+- SaaS spend forecasting
+
+---
+
+# Repository Structure
 
 ```text
 src/
@@ -165,6 +236,12 @@ src/
 
 ---
 
-## Author
+# Screenshots
 
-Built by Sejal Bhole as part of a startup-focused engineering assignment.
+Screenshots will be added during final production polish.
+
+---
+
+# Author
+
+Built by Sejal Bhole as part of a startup-focused engineering assignment focused on AI infrastructure optimization and SaaS cost analysis.

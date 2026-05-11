@@ -40,8 +40,7 @@ Tools audited: ${auditResult.results
 Write a concise 100-word personalized summary with optimization advice.
     `;
 
-    // Try gemini-1.5-flash first
-    let modelName = "gemini-1.5-flash";
+    let modelName = "gemini-2.5-flash";
     let response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
