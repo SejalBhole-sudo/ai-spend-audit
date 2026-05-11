@@ -84,8 +84,16 @@ return;
 };
 
   return (
-    <main className="min-h-screen flex flex-col items-center p-8 bg-gradient-to-br from-slate-950 via-slate-800 to-indigo-850 text-white">
-      <div className="mb-4 text-2xl md:text-3xl font-bold tracking-tight text-gray-400">
+    <main className="relative overflow-hidden min-h-screen flex flex-col items-center p-8 bg-[#0B1120] text-white">
+      <div className="absolute top-0 left-0 w-[800px] h-[900px] bg-sky-900/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+
+<div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+      <div
+  className="mb-8 text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(96,165,250,0.9)]"
+  style={{
+    WebkitTextStroke: "1px rgba(10, 10, 81, 0.35)",
+  }}
+>
   CredexIQ
 </div>
 
@@ -93,40 +101,40 @@ return;
   Stop Overpaying for AI Tools
 </h1>
 
-<p className="text-gray-600 text-lg md:text-xl mb-10 text-center max-w-2xl">
+<p className="text-sky-100 text-lg md:text-xl mb-12 text-center max-w-2xl">
   Instantly audit your ChatGPT, Claude, Cursor, Gemini, and AI tooling spend — and uncover hidden monthly savings.
 </p>
 
-<div className="flex flex-wrap justify-center gap-3 mb-10 text-sm text-gray-50">
-  <span className="bg-black/80 border border-white/100 backdrop-blur-sm px-3 py-1 rounded-full">
+<div className="flex flex-wrap justify-center gap-3 mb-10 text-base text-gray-50">
+  <span className="bg-black/80 border border-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
     ChatGPT
   </span>
 
-  <span className="bg-black/80 border border-white/100 backdrop-blur-sm px-3 py-1 rounded-full">
+  <span className="bg-black/80 border border-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
     Claude
   </span>
 
-  <span className="bg-black/80 border border-white/100 backdrop-blur-sm px-3 py-1 rounded-full">
+  <span className="bg-black/80 border border-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
     Cursor
   </span>
 
-  <span className="bg-black/80 border border-white/100 backdrop-blur-sm px-3 py-1 rounded-full">
+  <span className="bg-black/80 border border-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
     Gemini
   </span>
 
-  <span className="bg-black/80 border border-white/100 backdrop-blur-sm px-3 py-1 rounded-full">
+  <span className="bg-black/80 border border-white/70 backdrop-blur-sm px-3 py-1 rounded-full">
     GitHub Copilot
   </span>
 </div>
 
-      <div className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
+      <div className="w-full max-w-2xl bg-white/5 backdrop-blur-xl border border-white/40 rounded-3xl p-10 shadow-[0_0_60px_rgba(59,130,246,0.15)]">
   <ToolCard
     formData={formData}
     setFormData={setFormData}
   />
 </div>
 {error && (
-  <div className="mt-4 w-full max-w-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+  <div className="mt-6 w-full max-w-2xl bg-red-500/10 border border-red-400/20 backdrop-blur-md text-red-200 px-5 py-4 rounded-2xl text-sm shadow-lg">
     {error}
   </div>
 )}
@@ -134,10 +142,10 @@ return;
 <button
   onClick={handleAudit}
   disabled={loading}
-  className={`mt-6 px-8 py-4 text-lg rounded-xl border font-semibold transition-all duration-200 ${
+  className={`mt-10 px-10 py-4 text-xl rounded-2xl font-semibold transition-all duration-300 shadow-[0_0_60px_rgba(59,130,246,0.15)] ${
     loading
-      ? "bg-gray-700 border-gray-700 cursor-not-allowed text-gray-300"
-      : "bg-white text-black border-white hover:bg-gray-200"
+      ? "bg-gray-700 text-gray-300 cursor-not-allowed"
+      : "bg-white text-black hover:scale-[1.02] hover:bg-gray-200"
   }`}
 >
   {loading ? "Generating Audit..." : "Run Free Audit →"}

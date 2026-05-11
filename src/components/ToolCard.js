@@ -52,16 +52,23 @@ export default function ToolCard({
     ],
   };
 
+  const selectStyles =
+    "w-full appearance-none bg-black/30 border border-white/20 hover:border-blue-400/40 cursor-pointer text-white rounded-2xl px-5 py-4 text-base shadow-lg backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-400/40 transition-all duration-200";
+
+  const inputStyles =
+    "w-full bg-black/30 border border-white/20 hover:border-blue-400/40 text-white placeholder-gray-400 rounded-2xl px-5 py-4 text-base shadow-lg backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-400/40 transition-all duration-200";
+
   return (
-    <div className="w-full max-w-xl bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl space-y-5">
+    <div className="w-full space-y-6">
 
       {/* Tool */}
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">
+        <label htmlFor="tool-select" className="block text-sm font-medium text-gray-300 mb-2">
           AI Tool
         </label>
 
         <select
+          id="tool-select"
           value={formData.tool}
           onChange={(e) =>
             setFormData({
@@ -70,78 +77,83 @@ export default function ToolCard({
               plan: "",
             })
           }
-          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className={selectStyles}
         >
-          <option value="" className="text-black">
+          <option
+            value=""
+            disabled
+            hidden
+            className="bg-gray-900 text-gray-400"
+          >
             Select tool
           </option>
 
-          <option value="chatgpt" className="text-black">
+          <option value="chatgpt" className="bg-gray-900 text-white">
             ChatGPT
           </option>
 
-          <option value="claude" className="text-black">
+          <option value="claude" className="bg-gray-900 text-white">
             Claude
           </option>
 
-          <option value="cursor" className="text-black">
+          <option value="cursor" className="bg-gray-900 text-white">
             Cursor
           </option>
 
-          <option value="github_copilot" className="text-black">
+          <option value="github_copilot" className="bg-gray-900 text-white">
             GitHub Copilot
           </option>
 
-          <option value="gemini" className="text-black">
+          <option value="gemini" className="bg-gray-900 text-white">
             Gemini
           </option>
 
-          <option value="windsurf" className="text-black">
+          <option value="windsurf" className="bg-gray-900 text-white">
             Windsurf
           </option>
         </select>
       </div>
 
-      {/* Plan */}
-      <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">
-          Plan
-        </label>
+     {/* Plan */}
+<div>
+  <label htmlFor="plan-select" className="block text-sm font-medium text-gray-300 mb-2">
+    Plan
+  </label>
 
-        <select
-          value={formData.plan}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              plan: e.target.value,
-            })
-          }
-          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
-        >
-          <option value="" className="text-black">
-            Select plan
-          </option>
+  <select 
+    id="plan-select"
+    value={formData.plan}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        plan: e.target.value,
+      })
+    }
+    disabled={!formData.tool}
+    className={selectStyles}
+  >
+    <option value="" disabled hidden>
+      {formData.tool ? 'Select plan' : 'Select a tool first'}
+    </option>
 
-          {formData.tool &&
-            TOOL_PLANS[formData.tool]?.map((plan) => (
-              <option
-                key={plan}
-                value={plan}
-                className="text-black"
-              >
-                {plan}
-              </option>
-            ))}
-        </select>
-      </div>
+    {formData.tool && TOOL_PLANS[formData.tool] && 
+      TOOL_PLANS[formData.tool].map((plan) => (
+        <option key={plan} value={plan} className="bg-gray-900 text-white">
+          {plan}
+        </option>
+      ))
+    }
+  </select>
+</div>
 
       {/* Monthly Spend */}
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">
+        <label htmlFor="monthly-spend" className="block text-sm font-medium text-gray-300 mb-2">
           Monthly Spend ($)
         </label>
 
         <input
+          id="monthly-spend"
           type="number"
           placeholder="e.g. 120"
           value={formData.monthlySpend}
@@ -151,17 +163,18 @@ export default function ToolCard({
               monthlySpend: e.target.value,
             })
           }
-          className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className={inputStyles}
         />
       </div>
 
       {/* Seats */}
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">
+        <label htmlFor="seats" className="block text-sm font-medium text-gray-300 mb-2">
           Number of Seats
         </label>
 
         <input
+          id="seats"
           type="number"
           placeholder="e.g. 5"
           value={formData.seats}
@@ -171,17 +184,18 @@ export default function ToolCard({
               seats: e.target.value,
             })
           }
-          className="w-full bg-white/10 border border-white/10 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className={inputStyles}
         />
       </div>
 
       {/* Use Case */}
       <div>
-        <label className="block text-sm font-medium text-gray-200 mb-1">
+        <label htmlFor="use-case" className="block text-sm font-medium text-gray-300 mb-2">
           Primary Use Case
         </label>
 
         <select
+          id="use-case"
           value={formData.useCase}
           onChange={(e) =>
             setFormData({
@@ -189,25 +203,30 @@ export default function ToolCard({
               useCase: e.target.value,
             })
           }
-          className="w-full bg-white/10 border border-white/10 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className={selectStyles}
         >
-          <option value="" className="text-black">
+          <option
+            value=""
+            disabled
+            hidden
+            className="bg-gray-900 text-gray-400"
+          >
             Select use case
           </option>
 
-          <option value="coding" className="text-black">
+          <option value="coding" className="bg-gray-900 text-white">
             Coding
           </option>
 
-          <option value="writing" className="text-black">
+          <option value="writing" className="bg-gray-900 text-white">
             Writing
           </option>
 
-          <option value="research" className="text-black">
+          <option value="research" className="bg-gray-900 text-white">
             Research
           </option>
 
-          <option value="design" className="text-black">
+          <option value="design" className="bg-gray-900 text-white">
             Design
           </option>
         </select>
