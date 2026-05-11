@@ -12,10 +12,10 @@ export default function ResultsPage() {
   const [summaryLoading, setSummaryLoading] = useState(true)
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [reportId, setReportId] = useState(null)
-  const [mounted, setMounted] = useState(false) // ✅ Track if component is mounted
+  const [mounted, setMounted] = useState(false)
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' })
 
   useEffect(() => {
-    // ✅ Mark as mounted on client
     setMounted(true)
 
     const input = localStorage.getItem('audit_input')
@@ -29,10 +29,8 @@ export default function ResultsPage() {
     const result = runAudit(formData)
     setAuditData(result)
 
-    // Create shareable report
     createShareableReport(result)
 
-    // Fetch AI summary
     fetch('/api/summary', {
       method: 'POST',
       headers: {
@@ -74,9 +72,6 @@ export default function ResultsPage() {
 
       if (data.id) {
         setReportId(data.id)
-        console.log('Report created:', data.id)
-      } else {
-        console.error('Failed to create report:', data)
       }
     } catch (error) {
       console.error('Error creating shareable report:', error)
@@ -85,7 +80,8 @@ export default function ResultsPage() {
 
   const copyShareLink = async () => {
     if (!reportId) {
-      alert('Report is still loading...')
+      setNotification({ show: true, message: 'Report is still loading...', type: 'error' })
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000)
       return
     }
 
@@ -93,17 +89,24 @@ export default function ResultsPage() {
 
     try {
       await navigator.clipboard.writeText(url)
-      alert('Share link copied!')
+      setNotification({ show: true, message: '✅ Share link copied to clipboard!', type: 'success' })
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000)
     } catch (error) {
       console.error('Failed to copy:', error)
-      alert('Failed to copy link')
+      setNotification({ show: true, message: '❌ Failed to copy link', type: 'error' })
+      setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000)
     }
   }
 
-  if (!auditData)
+  if (!mounted || !auditData)
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading...
+      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block">
+            <div className="w-12 h-12 border-3 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-300">Generating your audit...</p>
+        </div>
       </div>
     )
 
@@ -113,139 +116,333 @@ export default function ResultsPage() {
   const lowSavings = totalMonthlySaving < 100
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 py-12">
-        {/* Hero savings block */}
-        <div
-          className={`rounded-2xl p-8 mb-8 text-center ${
-            highSavings ? 'bg-green-600 text-white' : isOptimal ? 'bg-blue-600 text-white' : 'bg-yellow-500 text-white'
-          }`}
-        >
+    <main className="relative overflow-hidden min-h-screen bg-[#0B1120] text-white">
+      {/* Background Orbs */}
+      <div className="absolute top-0 left-0 w-[800px] h-[900px] bg-sky-900/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12 sm:py-16">
+        
+        {/* Header with Navigation */}
+        <div className="flex items-center justify-between mb-12">
+          <div className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent"
+            style={{
+              WebkitTextStroke: "1px rgba(10, 10, 81, 0.35)",
+            }}>
+            CredexIQ
+          </div>
+          
+          <button
+            onClick={() => router.push('/')}
+            className="group relative px-6 py-2.5 rounded-xl overflow-hidden font-medium transition-all duration-300"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 group-hover:from-blue-500/40 group-hover:to-cyan-500/40 transition-all" />
+            <div className="absolute inset-0 border border-white/20 rounded-xl group-hover:border-white/40 transition-colors" />
+            <span className="relative text-sm text-gray-200 group-hover:text-white flex items-center gap-2">↻ New Audit</span>
+          </button>
+        </div>
+
+        {/* Main Savings Block */}
+        <div className={`rounded-3xl p-10 mb-10 backdrop-blur-xl border transition-all duration-500 ${
+          isOptimal
+            ? 'bg-gradient-to-br from-blue-600/20 to-cyan-600/10 border-blue-400/20'
+            : highSavings
+            ? 'bg-gradient-to-br from-green-600/20 to-emerald-600/10 border-green-400/20'
+            : 'bg-gradient-to-br from-blue-500/20 to-indigo-600/10 border-blue-400/20'
+        }`}>
           {isOptimal ? (
-            <>
-              <div className="text-5xl mb-2">✅</div>
-              <h1 className="text-3xl font-bold mb-2">You're spending well</h1>
-              <p className="text-lg opacity-90">Your AI tool stack looks optimized. No major changes needed.</p>
-            </>
+            <div className="text-center">
+              <div className="text-6xl mb-4">✅</div>
+              <h1 className="text-3xl sm:text-4xl font-bold mb-3">You're Optimized</h1>
+              <p className="text-gray-300 text-lg">Your AI tool stack is well-configured. No major changes needed.</p>
+            </div>
           ) : (
-            <>
-              <p className="text-lg opacity-90 mb-1">Potential monthly savings</p>
-              <div className="text-6xl font-bold mb-2">${totalMonthlySaving.toFixed(0)}</div>
-              <p className="text-lg opacity-90">
-                ${totalAnnualSaving.toFixed(0)}/year — on a ${totalCurrentSpend.toFixed(0)}/mo stack
+            <div className="text-center">
+              <p className="text-gray-300 text-sm uppercase tracking-widest mb-2">Potential Monthly Savings</p>
+              <h1 className="text-5xl sm:text-6xl font-black mb-3 bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent">
+                ${totalMonthlySaving.toFixed(0)}
+              </h1>
+              <p className="text-gray-300 text-lg">
+                That's <span className="font-bold text-white">${totalAnnualSaving.toFixed(0)}/year</span> on a <span className="font-bold text-white">${totalCurrentSpend.toFixed(0)}/month</span> stack
               </p>
-            </>
+            </div>
           )}
         </div>
 
-        {/* Shareable Report - ✅ Only show when mounted AND reportId exists */}
+        {/* Share Link Section */}
         {mounted && reportId && (
-          <div className="bg-white rounded-xl p-4 shadow-sm mb-6 flex items-center justify-between">
+          <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-6 mb-8 flex items-center justify-between">
             <div>
-              <p className="font-semibold text-gray-900">Share this audit</p>
-              <p className="text-sm text-gray-500">Public version with sensitive details removed</p>
+              <p className="font-semibold text-white">Share this audit</p>
+              <p className="text-sm text-gray-400">Public link with sensitive data removed</p>
             </div>
             <button
               onClick={copyShareLink}
-              className="bg-black text-white px-4 py-2 rounded-lg text-sm hover:bg-gray-800 transition-colors"
+              className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] transition-all"
             >
               Copy Link
             </button>
           </div>
         )}
 
-        {/* Loading state for share link */}
         {mounted && !reportId && (
-          <div className="bg-gray-100 rounded-xl p-4 mb-6 flex items-center justify-between animate-pulse">
-            <div>
-              <p className="font-semibold text-gray-400">Creating shareable link...</p>
-              <p className="text-sm text-gray-400">Please wait</p>
+          <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 mb-8 animate-pulse">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+              <p className="text-gray-400 text-sm">Creating shareable link...</p>
             </div>
-            <div className="w-20 h-10 bg-gray-300 rounded-lg"></div>
           </div>
         )}
 
         {/* AI Summary */}
-        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-          <h2 className="text-lg font-semibold mb-3">📊 Your Audit Summary</h2>
+        <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-10">
+          <h2 className="text-2xl font-bold mb-4">📊 Audit Summary</h2>
           {summaryLoading ? (
-            <div className="animate-pulse h-16 bg-gray-100 rounded" />
+            <div className="space-y-3">
+              <div className="h-4 bg-white/10 rounded-full w-3/4 animate-pulse"></div>
+              <div className="h-4 bg-white/10 rounded-full w-full animate-pulse"></div>
+              <div className="h-4 bg-white/10 rounded-full w-4/5 animate-pulse"></div>
+            </div>
           ) : (
-            <p className="text-gray-700 leading-relaxed">{summary}</p>
+            <p className="text-gray-200 leading-relaxed text-base">{summary}</p>
           )}
         </div>
 
-        {/* Per-tool breakdown */}
-        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-          <h2 className="text-lg font-semibold mb-4">Per-Tool Breakdown</h2>
+        {/* Per-Tool Breakdown */}
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-6">🔍 Per-Tool Breakdown</h2>
           <div className="space-y-4">
             {results.map((r) => (
-              <div key={r.toolId} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex justify-between items-start mb-2">
+              <div
+                key={r.toolId}
+                className="bg-white/5 backdrop-blur-xl border border-white/20 hover:border-white/40 rounded-2xl p-6 transition-all duration-300"
+              >
+                {/* Tool Header */}
+                <div className="flex items-start justify-between mb-4">
                   <div>
-                    <span className="font-semibold text-gray-900">{r.toolName}</span>
-                    <span className="text-sm text-gray-500 ml-2">
-                      {r.plan} · {r.seats} seat(s)
-                    </span>
+                    <h3 className="text-xl font-bold text-white mb-2">{r.toolName}</h3>
+                    <div className="flex gap-3 flex-wrap">
+                      <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-sm text-gray-200">
+                        {r.plan}
+                      </span>
+                      <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-sm text-gray-200">
+                        {r.seats} seat{r.seats !== 1 ? 's' : ''}
+                      </span>
+                    </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-500">Current: ${r.currentSpend}/mo</div>
-                    {r.totalSaving > 0 && (
-                      <div className="text-green-600 font-semibold">Save ${r.totalSaving.toFixed(0)}/mo</div>
-                    )}
+                    <p className="text-sm text-gray-400 mb-1">Current Spend</p>
+                    <p className="text-3xl font-bold text-white">${r.currentSpend}</p>
                   </div>
                 </div>
+
+                {/* Savings Highlight */}
+                {r.totalSaving > 0 && (
+                  <div className="bg-emerald-600/20 border border-emerald-500/30 rounded-lg p-4 mb-4">
+                    <p className="text-emerald-300 font-semibold">💰 Save ${r.totalSaving.toFixed(0)}/month</p>
+                  </div>
+                )}
+
+                {/* Recommendations */}
                 {r.recommendations.length === 0 ? (
-                  <p className="text-sm text-gray-500">✅ Looks optimal for your usage</p>
+                  <div className="text-green-300 text-sm">✅ Looks optimal for your usage</div>
                 ) : (
-                  <ul className="space-y-1">
+                  <div className="border-t border-white/10 pt-4 space-y-2">
                     {r.recommendations.slice(0, 2).map((rec, i) => (
-                      <li key={i} className="text-sm text-gray-700">
-                        <span className="text-yellow-600 mr-1">→</span> {rec.message}
-                      </li>
+                      <div key={i} className="flex gap-3 text-sm">
+                        <span className="text-yellow-400 flex-shrink-0">→</span>
+                        <span className="text-gray-300">{rec.message}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Lead capture */}
-        <div className="bg-white rounded-xl p-6 shadow-sm mb-6 border border-blue-100">
-          <h2 className="text-lg font-semibold mb-1">
-            {lowSavings ? '🔔 Stay updated' : '📧 Get your full report'}
-          </h2>
-          <p className="text-gray-500 text-sm mb-4">
+        {/* CTA Section */}
+        <div className="bg-gradient-to-br from-blue-600/30 to-indigo-600/20 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-8 mb-8">
+          <h3 className="text-2xl font-bold mb-2">
+            {lowSavings ? '🔔 Stay Updated' : '📧 Get Your Full Report'}
+          </h3>
+          <p className="text-gray-300 mb-6">
             {lowSavings
-              ? "You're in good shape. Get notified when new optimizations apply to your stack."
-              : "We'll email you a detailed breakdown and flag when better pricing becomes available."}
+              ? "You're in great shape. Get notified when new optimizations apply to your stack."
+              : "We'll email you a detailed breakdown and notify you when better pricing becomes available."}
           </p>
           <button
             onClick={() => setShowEmailModal(true)}
-            className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold py-3 rounded-xl hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] transition-all"
           >
-            {lowSavings ? 'Notify me of savings →' : 'Email me this report →'}
+            {lowSavings ? 'Notify Me of Savings →' : 'Email Me This Report →'}
           </button>
         </div>
 
-        <button
-          onClick={() => router.push('/')}
-          className="text-sm text-gray-400 hover:text-gray-600 underline"
-        >
-          ← Run a new audit
-        </button>
+        {/* Footer */}
+        <div className="text-center text-gray-500 text-xs">
+          <p>CredexIQ © 2024</p>
+        </div>
       </div>
 
       {/* Email Modal */}
       {showEmailModal && <EmailModal auditData={auditData} onClose={() => setShowEmailModal(false)} />}
+
+      {/* Notification Toast */}
+      {notification.show && (
+        <div className={`fixed bottom-6 right-6 px-6 py-4 rounded-xl backdrop-blur-xl border transition-all duration-300 max-w-sm ${
+          notification.type === 'success'
+            ? 'bg-green-600/20 border-green-500/30 text-green-300'
+            : 'bg-red-600/20 border-red-500/30 text-red-300'
+        }`}>
+          {notification.message}
+        </div>
+      )}
     </main>
   )
 }
 
-// Fallback summary generator (you should have this function)
 function generateFallbackSummary(result) {
-  return `Your AI tool spend audit is complete. You're currently spending $${result.totalCurrentSpend.toFixed(
-    0
-  )}/month and could save $${result.totalMonthlySaving.toFixed(0)}/month with optimizations.`
+  const savings = result.totalMonthlySaving
+  const spend = result.totalCurrentSpend
+  
+  if (result.isOptimal) {
+    return `Your AI tool spending is well-optimized. You're currently investing $${spend.toFixed(0)}/month with no major inefficiencies detected.`
+  }
+  
+  if (savings > 500) {
+    return `You have significant optimization opportunities. By adjusting your plans and team allocation, you could save $${savings.toFixed(0)}/month ($${result.totalAnnualSaving.toFixed(0)}/year). This represents a ${((savings / spend) * 100).toFixed(0)}% reduction in your current spending.`
+  }
+  
+  return `Your audit is complete. You're spending $${spend.toFixed(0)}/month and could optimize for $${savings.toFixed(0)}/month in savings.`
+}
+
+function EmailModal({ auditData, onClose }) {
+  const [formData, setFormData] = useState({
+    email: '',
+    company: '',
+    role: ''
+  })
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('') // 'success' or 'error'
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage('')
+
+    try {
+      // Add your API call here
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        setMessage('✅ Report sent! Check your email.')
+        setMessageType('success')
+        setTimeout(() => {
+          onClose()
+        }, 1500)
+      } else {
+        setMessage('❌ Something went wrong. Try again.')
+        setMessageType('error')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setMessage('❌ Something went wrong. Try again.')
+      setMessageType('error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-[#0B1120] border border-white/20 rounded-2xl p-8 max-w-md w-full">
+        <h3 className="text-2xl font-bold mb-2">Get Your Report</h3>
+        <p className="text-gray-400 text-sm mb-6">Enter your details to receive optimization insights.</p>
+        
+        {message && (
+          <div className={`mb-4 p-3 rounded-lg text-sm ${
+            messageType === 'success' 
+              ? 'bg-green-600/20 border border-green-500/30 text-green-300'
+              : 'bg-red-600/20 border border-red-500/30 text-red-300'
+          }`}>
+            {message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs text-gray-400 mb-2">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400/40 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-400 mb-2">Company</label>
+            <input
+              type="text"
+              name="company"
+              placeholder="Your Company"
+              value={formData.company}
+              onChange={handleChange}
+              required
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400/40 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-400 mb-2">Role</label>
+            <input
+              type="text"
+              name="role"
+              placeholder="Your Role"
+              value={formData.role}
+              onChange={handleChange}
+              required
+              className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400/40 transition-all"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1 px-4 py-3 border border-white/20 rounded-lg text-white hover:bg-white/5 transition-all disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all disabled:opacity-50"
+            >
+              {loading ? 'Sending...' : 'Send'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
 }

@@ -16,8 +16,8 @@
 | Persistence | localStorage |
 | Routing | Next.js App Router |
 | Audit Logic | Custom Rule-Based Audit Engine |
-| Planned Database | Supabase |
-| Planned AI Integration | Anthropic Claude API |
+| Database | Supabase |
+| AI Integration | Gemini API |
 
 ## System Diagram
 

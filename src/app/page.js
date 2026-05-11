@@ -142,10 +142,10 @@ return;
 <button
   onClick={handleAudit}
   disabled={loading}
-  className={`mt-10 px-10 py-4 text-xl rounded-2xl font-semibold transition-all duration-300 shadow-[0_0_60px_rgba(59,130,246,0.15)] ${
+  className={`mt-10 px-10 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 shadow-[0_0_60px_rgba(59,130,246,0.15)] ${
     loading
-      ? "bg-gray-700 text-gray-300 cursor-not-allowed"
-      : "bg-white text-black hover:scale-[1.02] hover:bg-gray-200"
+      ? "bg-gradient-to-r from-gray-600 to-gray-700 text-gray-400 cursor-not-allowed"
+      : "bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:shadow-[0_0_60px_rgba(59,130,246,0.5)] hover:scale-[1.02]"
   }`}
 >
   {loading ? "Generating Audit..." : "Run Free Audit →"}
