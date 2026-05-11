@@ -16,6 +16,7 @@ export default function Home() {
 });
 const [loading, setLoading] = useState(false);
 const [results, setResults] = useState([]);
+const [error, setError] = useState("");
 
 useEffect(() => {
   const savedData = localStorage.getItem("auditForm");
@@ -41,10 +42,10 @@ const handleAudit = async () => {
     !formData.seats ||
     !formData.useCase
   ) {
-    alert("Please fill all fields.");
-    return;
+    setError("Please complete all required fields.");
+return;
   }
-
+  setError("");
   setLoading(true);
 
   try {
@@ -96,6 +97,11 @@ const handleAudit = async () => {
   formData={formData}
   setFormData={setFormData}
 />
+{error && (
+  <div className="mt-4 w-full max-w-md bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+    {error}
+  </div>
+)}
 
 <button
   onClick={handleAudit}
