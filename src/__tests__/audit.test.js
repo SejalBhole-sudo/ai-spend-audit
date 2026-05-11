@@ -36,10 +36,12 @@ describe("Audit Engine — Core Rules", () => {
       (r) => r.toolId === "cursor"
     );
 
+    expect(cursorResult).toBeDefined();
+
     const hasOverpayingFlag =
-      cursorResult.recommendations.some(
+      cursorResult?.recommendations?.some(
         (r) => r.type === "overpaying_retail"
-      );
+      ) || false;
 
     expect(hasOverpayingFlag).toBe(true);
   });
@@ -61,10 +63,12 @@ describe("Audit Engine — Core Rules", () => {
       (r) => r.toolId === "claude"
     );
 
+    expect(claudeResult).toBeDefined();
+
     const hasWrongPlan =
-      claudeResult.recommendations.some(
+      claudeResult?.recommendations?.some(
         (r) => r.type === "wrong_plan"
-      );
+      ) || false;
 
     expect(hasWrongPlan).toBe(true);
   });
@@ -92,10 +96,12 @@ describe("Audit Engine — Core Rules", () => {
       (r) => r.toolId === "github_copilot"
     );
 
+    expect(copilotResult).toBeDefined();
+
     const isRedundant =
-      copilotResult.recommendations.some(
+      copilotResult?.recommendations?.some(
         (r) => r.type === "redundant"
-      );
+      ) || false;
 
     expect(isRedundant).toBe(true);
   });
@@ -124,7 +130,7 @@ describe("Audit Engine — Core Rules", () => {
     const result = runAudit({
       tools: {
         claude: {
-          plan: "Max",
+          plan: "Max5",
           seats: 1,
           monthlySpend: "100",
         },
@@ -137,10 +143,12 @@ describe("Audit Engine — Core Rules", () => {
       (r) => r.toolId === "claude"
     );
 
+    expect(claudeResult).toBeDefined();
+
     const hasDowngrade =
-      claudeResult.recommendations.some(
+      claudeResult?.recommendations?.some(
         (r) => r.type === "downgrade"
-      );
+      ) || false;
 
     expect(hasDowngrade).toBe(true);
   });

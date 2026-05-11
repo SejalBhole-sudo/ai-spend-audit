@@ -111,13 +111,19 @@ export function runAudit(formData) {
       })
     }
 
-    if (toolId === 'claude' && plan === 'Max' && useCase !== 'coding') {
-      recommendations.push({
-        type: 'downgrade',
-        message: `Claude Max ($100/mo) is designed for very heavy usage. For ${useCase}, Pro at $20/mo likely covers your needs.`,
-        saving: (100 - 20) * seats
-      })
-    }
+    if (
+  toolId === 'claude' &&
+  (plan === 'Max5' || plan === 'Max20') &&
+  useCase !== 'coding'
+) {
+  const actualPrice = plan === 'Max20' ? 200 : 100
+
+  recommendations.push({
+    type: 'downgrade',
+    message: `Claude ${plan} is designed for extremely heavy usage. For ${useCase}, Claude Pro at $20/mo is likely sufficient.`,
+    saving: (actualPrice - 20) * seats
+  })
+}
 
     // RULE 4: Cross-tool redundancy
     const toolIds = Object.keys(tools)
