@@ -7,6 +7,7 @@ export async function POST(req) {
 
     // Validate input
     if (!reportData) {
+      console.warn("No report data provided");
       return Response.json(
         {
           success: false,
@@ -16,24 +17,36 @@ export async function POST(req) {
       );
     }
 
-    console.log('Creating report...', {
+    console.log("Creating report...", {
       hasSavings: !!reportData.totalMonthlySaving,
       hasResults: !!reportData.results,
+      resultsCount: reportData.results?.length || 0,
     });
 
-    // Verify Supabase connection
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.error('Missing Supabase environment variables');
+    // Verify environment variables are configured
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
       return Response.json(
         {
           success: false,
-          error: "Server configuration error",
-          details: "Supabase credentials not configured",
+          error: "Server not configured: Missing Supabase URL",
         },
         { status: 500 }
       );
     }
 
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error("Missing NEXT_PUBLIC_SUPABASE_ANON_KEY environment variable");
+      return Response.json(
+        {
+          success: false,
+          error: "Server not configured: Missing Supabase key",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Attempt to insert into database
     const { data, error } = await supabase
       .from("reports")
       .insert([
@@ -43,36 +56,54 @@ export async function POST(req) {
       ])
       .select()
       .single();
-
+console.log("Supabase response:", data, error);
+    // Handle database errors
     if (error) {
-      console.error('Database insertion error:', {
+      console.error("Database insertion error:", {
         message: error.message,
         code: error.code,
         details: error.details,
+        hint: error.hint,
       });
+
+      // Provide specific error messages based on error type
+      let userMessage = "Failed to save report";
+      
+      if (error.code === "42P01") {
+        userMessage = "Database table 'reports' not found. Please create it.";
+      } else if (error.code === "42501") {
+        userMessage = "Permission denied. Table permissions need to be configured.";
+      } else if (error.code === "23505") {
+        userMessage = "Duplicate entry. This report already exists.";
+      }
 
       return Response.json(
         {
           success: false,
-          error: "Failed to create report in database",
+          error: userMessage,
+          code: error.code,
           details: error.message,
         },
         { status: 500 }
       );
     }
 
+    // Verify data was returned
     if (!data || !data.id) {
-      console.error('No ID returned from database insert');
+      console.error("No ID returned from database insert", { data });
       return Response.json(
         {
           success: false,
-          error: "Report created but ID not returned",
+          error: "Report created but no ID returned",
         },
         { status: 500 }
       );
     }
 
-    console.log('Report created successfully with ID:', data.id);
+    console.log("Report created successfully", {
+      id: data.id,
+      createdAt: data.created_at,
+    });
 
     return Response.json({
       success: true,
@@ -80,16 +111,16 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.error('Report API error:', {
+    console.error("Report API error:", {
       message: error.message,
       stack: error.stack,
+      name: error.name,
     });
 
     return Response.json(
       {
         success: false,
-        error: "Failed to create report",
-        details: error.message,
+        error: `Error: ${error.message}`,
       },
       { status: 500 }
     );

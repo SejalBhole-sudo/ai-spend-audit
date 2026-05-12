@@ -47,7 +47,7 @@ export async function generateMetadata({
   };
 }
 export default async function ReportPage({ params }) {
-  const { id } = params; 
+  const { id } = await params;
   
   const { data, error } = await supabase
     .from("reports")
