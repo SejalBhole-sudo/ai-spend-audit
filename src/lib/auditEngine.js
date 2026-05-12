@@ -146,7 +146,7 @@ export function runAudit(formData) {
     if (currentSpend >= 100) {
       recommendations.push({
         type: 'credits_opportunity',
-        message: `Spending $${currentSpend}/mo on ${toolId.replace('_', ' ')}? Credex offers discounted credits from companies that overforecasted — potential 20–40% savings.`,
+        message: `Spending $${currentSpend}/mo on ${toolId.replace('_', ' ')}? CredexIQ offers discounted credits from companies that overforecasted — potential 20–40% savings.`,
         saving: currentSpend * 0.25 // conservative 25% estimate
       })
     }

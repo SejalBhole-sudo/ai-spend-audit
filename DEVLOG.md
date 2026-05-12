@@ -224,198 +224,93 @@
 - Improve loading states and disabled button handling
 - Prepare final README screenshots and presentation polish
 
-# DEVLOG — Day 6
+## Day 6 — 2026-05-11
 
-## Focus
-Production polish, UX improvements, branding updates, AI summary resilience, and shareable report debugging.
+**Hours worked:** 9
 
----
+### What I did
 
-# Major Progress Completed
+- Rebranded the product fully from “Credex Audit” to “CredexIQ” across:
+  - homepage
+  - results page
+  - metadata
+  - repository naming
+  - README
+  - UI labels
+- Redesigned the homepage UI to better match a modern SaaS product aesthetic:
+  - dark gradient theme
+  - glow effects
+  - glassmorphism cards
+  - responsive spacing improvements
+  - improved typography hierarchy
+  - polished CTA interactions
+- Refined the audit form UX significantly:
+  - dynamic plan dropdowns based on selected tool
+  - improved placeholders
+  - cleaner validation handling
+  - better dropdown consistency
+  - improved responsive behavior
+- Redesigned the results dashboard UI to better align with the homepage design system:
+  - premium card styling
+  - improved spacing
+  - stronger visual hierarchy
+  - polished recommendation sections
+  - improved CTA sections
+- Implemented and debugged public shareable audit reports:
+  - Supabase-backed report persistence
+  - dynamic `/report/[id]` route rendering
+  - public report sharing flow
+  - copy-to-clipboard interactions
+- Fully redesigned the public report page to visually match the rest of the product:
+  - dark SaaS aesthetic
+  - glow background effects
+  - glassmorphism styling
+  - consistent gradients and spacing
+- Fixed multiple production issues affecting public reports:
+  - missing report IDs
+  - Supabase insert handling
+  - async route params in Next.js
+  - Vercel environment variable issues after project rename
+- Implemented resilient fallback behavior for Gemini AI summaries:
+  - fallback executive summaries
+  - graceful quota failure handling
+  - improved AI prompts
+  - cleaner summary formatting
+- Integrated and debugged email workflows using Resend:
+  - lead persistence
+  - email delivery handling
+  - sandbox email limitations
+  - environment variable validation
+- Added favicon/logo branding support for browser tabs and metadata
+- Cleaned production logs by removing temporary debugging statements
+- Continued refining README structure and startup-oriented documentation
 
-## 1. Product Rebrand
+### What I learned
 
-The platform branding was officially updated from:
+- Vercel project renaming can unintentionally remove environment variables
+- Public sharing flows require careful handling of async rendering and persistence state
+- Graceful degradation is essential when working with rate-limited AI APIs
+- Small UI consistency improvements significantly increase perceived product quality
+- Production debugging consumes significantly more time than feature implementation
 
-- Credex Audit
-to:
-- CredexIQ
+### Blockers / challenges
 
-Updated branding across:
-- homepage
-- results page
-- README
-- metadata
-- UI labels
-- repository naming references
+- Gemini API quota exhaustion prevented consistent AI-generated summaries during testing
+- Public report rendering issues required debugging both frontend state flow and backend persistence
+- Resend sandbox restrictions limited email delivery to verified/testing accounts
+- Several UI refactors temporarily broke conditional rendering and report generation flows
 
----
+### Plan for tomorrow
 
-# 2. Homepage UI/UX Improvements
+- Add final README screenshots
+- Complete remaining entrepreneurial documentation:
+  - GTM.md
+  - ECONOMICS.md
+  - METRICS.md
+  - LANDING_COPY.md
+  - REFLECTION.md
+- Perform final mobile responsiveness verification
+- Finalize production cleanup and deployment polish
+- Reduce remaining UI inconsistencies
+- Prepare final portfolio-ready presentation polish
 
-Significant UI polish was completed for the landing page.
-
-### Improvements included:
-- redesigned hero section
-- premium dark gradient aesthetic
-- glow effects
-- glassmorphism-inspired cards
-- responsive spacing improvements
-- improved typography hierarchy
-- enhanced CTA button styling
-- dynamic hover states
-- improved visual consistency
-
----
-
-# 3. Dynamic Form UX
-
-The audit form was improved substantially.
-
-### New behavior:
-- plan dropdown now changes dynamically based on selected AI tool
-- invalid plan combinations removed
-- cleaner form hierarchy
-- improved dropdown styling
-- improved placeholder handling
-- better visual consistency across inputs
-
-Supported tools:
-- ChatGPT
-- Claude
-- Cursor
-- GitHub Copilot
-- Gemini
-- Windsurf
-
----
-
-# 4. Results Page Polish
-
-The results dashboard received major UX upgrades.
-
-### Improvements:
-- improved savings visualization
-- better recommendation hierarchy
-- premium card styling
-- improved spacing and readability
-- upgraded CTA sections
-- responsive dashboard behavior
-- polished notification system
-- shareable report UI integration
-
----
-
-# 5. AI Summary System Improvements
-
-The Gemini integration and fallback architecture were significantly improved.
-
-### Changes:
-- upgraded Gemini prompts
-- improved summary tone and formatting
-- removed markdown-heavy responses
-- added premium executive-summary style prompting
-- improved fallback logic behavior
-- ensured graceful degradation during API failures
-
----
-
-# 6. Gemini API Debugging
-
-Several Gemini API issues were identified and resolved.
-
-### Issues addressed:
-- outdated model naming
-- API fallback logic
-- quota exhaustion handling
-- frontend/backend fallback coordination
-- summary rendering consistency
-
-### Final behavior:
-- Gemini summary shown when available
-- polished fallback summary shown during quota/rate-limit failures
-- application remains stable even during AI outages
-
----
-
-# 7. Shareable Report Debugging
-
-Investigated issues related to:
-- report persistence
-- report loading
-- public share links
-- Supabase integration
-
-### Findings:
-- shareable report architecture exists
-- report ID generation exists
-- issue narrowed down to report creation/data return flow
-- debugging in progress
-
----
-
-# 8. README Rewrite
-
-README.md was fully rewritten and upgraded.
-
-### Improvements:
-- professional SaaS positioning
-- updated branding
-- architecture explanations
-- feature documentation
-- AI summary architecture notes
-- environment setup
-- improved project structure explanation
-
----
-
-# 9. Git & Deployment Maintenance
-
-Completed:
-- repository rename handling
-- Git remote updates
-- Vercel deployment synchronization
-- production deployment verification
-- CI verification
-
----
-
-# Current Status
-
-## Completed
-- homepage polish
-- results page polish
-- branding updates
-- AI summary system
-- fallback summaries
-- responsive UI improvements
-- documentation improvements
-- CI stability
-- deployment stability
-
----
-
-# Remaining Work
-
-## High Priority
-- finish shareable report persistence flow
-- fix email workflow
-- mobile verification
-- screenshots for README
-- final production cleanup
-
-## Medium Priority
-- Supabase persistence refinement
-- analytics improvements
-- advanced sharing flows
-
----
-
-# Key Takeaway
-
-The project transitioned from a functional engineering assignment into a polished startup-style SaaS MVP with:
-- premium UI/UX
-- resilient AI integration
-- production-oriented fallback handling
-- improved architecture quality
-- stronger portfolio presentation

@@ -44,6 +44,8 @@ CredexIQ currently supports auditing for:
 - GitHub Copilot
 - Gemini
 - Windsurf
+- OpenAI API
+- Anthropic API
 
 Additional tools and pricing providers are planned in future updates.
 
@@ -236,9 +238,26 @@ src/
 
 ---
 
-# Screenshots
+## Screenshots
 
-Screenshots will be added during final production polish.
+### Landing Page
+![Landing Page](./screenshots/landing-page.png)
+
+### AI Audit Form
+![AI Audit Form](./screenshots/AI-audit-form.png)
+
+### Audit Result — Savings Overview
+![Audit Result 1](./screenshots/audit-result-1.png)
+
+### Audit Result — Recommendations Breakdown
+![Audit Result 2](./screenshots/audit-result-2.png)
+
+### Email Details Form
+![Email Details Form](./screenshots/email-details-form.png)
+
+### Shareable Public Report
+![Shareable Public Report](./screenshots/shareable-report.png)
+
 
 ---
 
