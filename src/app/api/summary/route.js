@@ -32,8 +32,7 @@ The summary should:
 - avoid markdown formatting or section headings
 
 Keep it under 140 words.
-`;
-
+`
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
@@ -58,12 +57,6 @@ Keep it under 140 words.
     );
 
     const data = await response.json();
-
-    // Debug logging
-    console.log(
-      "Gemini Summary Response:",
-      JSON.stringify(data, null, 2)
-    );
 
     // If Gemini fails for any reason,
     // frontend fallback summary handles UX

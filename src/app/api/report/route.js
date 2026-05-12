@@ -17,12 +17,6 @@ export async function POST(req) {
       );
     }
 
-    console.log("Creating report...", {
-      hasSavings: !!reportData.totalMonthlySaving,
-      hasResults: !!reportData.results,
-      resultsCount: reportData.results?.length || 0,
-    });
-
     // Verify environment variables are configured
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
       console.error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
@@ -56,7 +50,7 @@ export async function POST(req) {
       ])
       .select()
       .single();
-console.log("Supabase response:", data, error);
+
     // Handle database errors
     if (error) {
       console.error("Database insertion error:", {
@@ -99,11 +93,6 @@ console.log("Supabase response:", data, error);
         { status: 500 }
       );
     }
-
-    console.log("Report created successfully", {
-      id: data.id,
-      createdAt: data.created_at,
-    });
 
     return Response.json({
       success: true,

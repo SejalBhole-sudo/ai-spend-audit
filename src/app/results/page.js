@@ -198,7 +198,7 @@ export default function ResultsPage() {
 
         {/* AI Summary */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8">
-          <h3 className="text-xl font-bold mb-4">AI-Generated Summary</h3>
+          <h3 className="text-xl font-bold mb-4">📌 Audit Summary</h3>
           {summaryLoading ? (
             <div className="space-y-3 animate-pulse">
               <div className="h-4 bg-gray-700/50 rounded w-full"></div>
@@ -212,7 +212,7 @@ export default function ResultsPage() {
 
         {/* Detailed Results */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8">
-          <h3 className="text-xl font-bold mb-6">Tool-by-Tool Analysis</h3>
+          <h3 className="text-xl font-bold mb-6">📊 AI Tool Analysis</h3>
           <div className="space-y-4">
             {results.map((result) => (
               <div key={result.toolId} className="border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">

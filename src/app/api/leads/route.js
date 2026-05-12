@@ -29,8 +29,6 @@ export async function POST(req) {
       );
     }
 
-    console.log("Processing lead submission for:", email);
-
     // Step 1: Save to database
     const { error: dbError } = await supabase
       .from("leads")
@@ -54,8 +52,6 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-
-    console.log("Lead saved to database successfully");
 
     // Step 2: Try to send email (but don't fail if it doesn't work)
     let emailSent = false;
@@ -85,7 +81,6 @@ export async function POST(req) {
         `,
       });
 
-      console.log("Email sent successfully:", emailResponse.id);
       emailSent = true;
     } catch (emailError) {
       // Log the error but don't fail the whole request

@@ -67,8 +67,7 @@ export function runAudit(formData) {
     const { plan, seats, monthlySpend } = toolData
     const currentSpend = parseFloat(monthlySpend) || 0
     const toolPricing = OFFICIAL_PRICING[toolId]
-    console.log(toolId, plan, seats, monthlySpend)
-
+    
     if (!toolPricing || !toolPricing[plan]) continue
 
     const officialCostPerSeat = toolPricing[plan].pricePerSeat
