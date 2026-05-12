@@ -72,6 +72,8 @@ export default function ResultsPage() {
 
       if (data.id) {
         setReportId(data.id)
+      } else {
+        console.error('Failed to create report:', data.error)
       }
     } catch (error) {
       console.error('Error creating shareable report:', error)
@@ -195,73 +197,58 @@ export default function ResultsPage() {
         )}
 
         {/* AI Summary */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-10">
-          <h2 className="text-2xl font-bold mb-4">📊 Audit Summary</h2>
+        <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8">
+          <h3 className="text-xl font-bold mb-4">AI-Generated Summary</h3>
           {summaryLoading ? (
-            <div className="space-y-3">
-              <div className="h-4 bg-white/10 rounded-full w-3/4 animate-pulse"></div>
-              <div className="h-4 bg-white/10 rounded-full w-full animate-pulse"></div>
-              <div className="h-4 bg-white/10 rounded-full w-4/5 animate-pulse"></div>
+            <div className="space-y-3 animate-pulse">
+              <div className="h-4 bg-gray-700/50 rounded w-full"></div>
+              <div className="h-4 bg-gray-700/50 rounded w-5/6"></div>
+              <div className="h-4 bg-gray-700/50 rounded w-4/6"></div>
             </div>
           ) : (
-            <p className="text-gray-200 leading-relaxed text-base">{summary}</p>
+            <p className="text-gray-300 leading-relaxed">{summary}</p>
           )}
         </div>
 
-        {/* Per-Tool Breakdown */}
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold mb-6">🔍 Per-Tool Breakdown</h2>
+        {/* Detailed Results */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl p-8 mb-8">
+          <h3 className="text-xl font-bold mb-6">Tool-by-Tool Analysis</h3>
           <div className="space-y-4">
-            {results.map((r) => (
-              <div
-                key={r.toolId}
-                className="bg-white/5 backdrop-blur-xl border border-white/20 hover:border-white/40 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.12)]"
-              >
-                {/* Tool Header */}
-                <div className="flex items-start justify-between mb-4">
+            {results.map((result) => (
+              <div key={result.toolId} className="border border-white/10 rounded-xl p-6 hover:border-white/20 transition-all">
+                <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-2">{r.toolName}</h3>
-                    <div className="flex gap-3 flex-wrap">
-                      <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-sm text-gray-200">
-                        {r.plan}
-                      </span>
-                      <span className="px-3 py-1 bg-white/10 border border-white/20 rounded-lg text-sm text-gray-200">
-                        {r.seats} seat{r.seats !== 1 ? 's' : ''}
-                      </span>
+                    <h4 className="font-semibold text-white">{result.toolName}</h4>
+                    <p className="text-sm text-gray-400">{result.plan}</p>
+                  </div>
+                  {result.totalSaving > 0 && (
+                    <div className="text-right">
+                      <p className="text-2xl font-black text-green-400">
+                        ${result.totalSaving.toFixed(0)}
+                      </p>
+                      <p className="text-xs text-gray-400">savings/month</p>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-400 mb-1">Current Spend</p>
-                    <p className="text-3xl font-bold text-white">${r.currentSpend}</p>
-                  </div>
+                  )}
                 </div>
 
-                {/* Savings Highlight */}
-                {r.totalSaving > 0 && (
-                  <div className="bg-emerald-600/20 border border-emerald-500/30 rounded-lg p-4 mb-4">
-                    <p className="text-emerald-300 font-semibold">💰 Save ${r.totalSaving.toFixed(0)}/month</p>
-                  </div>
-                )}
-
-                {/* Recommendations */}
-                {r.recommendations.length === 0 ? (
-                  <div className="text-green-300 text-sm">✅ Looks optimal for your usage</div>
+                {result.recommendations.length === 0 ? (
+                  <p className="text-sm text-gray-500 italic">✓ This tool is well-optimized</p>
                 ) : (
-                  <div className="border-t border-white/10 pt-4 space-y-2">
-                    {r.recommendations.slice(0, 2).map((rec, i) => (
-                      <div key={i} className="flex gap-3 text-sm">
-                        <span className="text-yellow-400 flex-shrink-0">→</span>
-                        <span className="text-gray-300">{rec.message}</span>
-                      </div>
+                  <ul className="space-y-2 mt-4 pt-4 border-t border-white/10">
+                    {result.recommendations.map((rec, idx) => (
+                      <li key={idx} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="text-yellow-400 flex-shrink-0 mt-1">→</span>
+                        <span>{rec.message}</span>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 )}
               </div>
             ))}
           </div>
         </div>
 
-        {/* CTA Section */}
+        {/* Email CTA */}
         <div className="bg-gradient-to-br from-blue-600/30 to-indigo-600/20 backdrop-blur-xl border border-blue-400/20 rounded-2xl p-8 mb-8">
           <h3 className="text-2xl font-bold mb-2">
             {lowSavings ? '🔔 Stay Updated' : '📧 Get Your Full Report'}
@@ -352,29 +339,45 @@ function EmailModal({ auditData, onClose }) {
     setLoading(true)
     setMessage('')
 
+    // Validate inputs
+    if (!formData.email || !formData.company || !formData.role) {
+      setMessage('❌ Please fill in all fields.')
+      setMessageType('error')
+      setLoading(false)
+      return
+    }
+
     try {
-      // Add your API call here
-      const response = await fetch('/api/subscribe', {
+      // Call the correct API endpoint
+      const response = await fetch('/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          email: formData.email,
+          company: formData.company,
+          role: formData.role,
+          monthlySaving: auditData.totalMonthlySaving,
+          annualSaving: auditData.totalAnnualSaving,
+        }),
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (response.ok && data.success) {
         setMessage('✅ Report sent! Check your email.')
         setMessageType('success')
         setTimeout(() => {
           onClose()
         }, 1500)
       } else {
-        setMessage('❌ Something went wrong. Try again.')
+        setMessage(`❌ ${data.error || 'Something went wrong. Try again.'}`)
         setMessageType('error')
       }
     } catch (error) {
       console.error('Error:', error)
-      setMessage('❌ Something went wrong. Try again.')
+      setMessage('❌ Failed to send. Please try again.')
       setMessageType('error')
     } finally {
       setLoading(false)
