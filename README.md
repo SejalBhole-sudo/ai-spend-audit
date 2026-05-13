@@ -119,7 +119,7 @@ npm run test
 Create a `.env.local` file:
 
 ```env
-GEMINI_API_KEY=your_api_key_here
+GEMINI_API_KEY=AIzaSyBGLxK3tX7cfjvk9LaK2_lnlEA3_2iWHIw;
 ```
 
 ---
@@ -170,16 +170,23 @@ Risk reduction is handled through:
 
 ---
 
-# AI Summary System
+## AI Summary Architecture
 
-CredexIQ uses Google Gemini for generating personalized executive summaries of audit results.
+The original implementation plan included Anthropic Claude for AI-generated audit summaries.
 
-The platform also includes a resilient fallback summary engine to ensure polished user experience even during:
+During development, Gemini Flash APIs were used instead due to:
+- faster prototyping iteration
+- easier free-tier access during MVP development
+- simpler integration workflow for rapid experimentation
 
-- API outages
-- rate limiting
-- quota exhaustion
-- model downtime
+The summary system was intentionally designed with graceful fallback behavior so audit results remain fully functional even if AI generation fails or rate limits occur.
+
+Importantly, AI is only used for:
+- executive-style summaries
+- explanation formatting
+- recommendation presentation
+
+All pricing calculations, savings analysis, and audit recommendations remain deterministic and rule-based to ensure explainability and consistency.
 
 ---
 
@@ -228,13 +235,44 @@ The platform also includes a resilient fallback summary engine to ensure polishe
 
 # Repository Structure
 
-```text
-src/
-├── app/
-├── components/
-├── lib/
-└── __tests__/
-```
+credexiq/
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── summary/
+│   │   ├── report/
+│   │   │   └── [id]/
+│   │   ├── results/
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.js
+│   │   └── page.js
+│   ├── components/
+│   ├── lib/
+│   └── __tests__/
+│
+├── public/
+│
+├── .env.local
+├── .gitignore
+├── ARCHITECTURE.md
+├── DEVLOG.md
+├── ECONOMICS.md
+├── eslint.config.mjs
+├── GTM.md
+├── jsconfig.json
+├── LANDING_COPY.md
+├── METRICS.md
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── PRICING_DATA.md
+├── PROMPTS.md
+├── README.md
+├── REFLECTION.md
+├── TESTS.md
+└── USER_INTERVIEWS.md
 
 ---
 
