@@ -114,15 +114,6 @@ npm run test
 
 ---
 
-# Environment Variables
-
-Create a `.env.local` file:
-
-```env
-GEMINI_API_KEY=AIzaSyBGLxK3tX7cfjvk9LaK2_lnlEA3_2iWHIw;
-```
-
----
 
 # Architecture Decisions
 
